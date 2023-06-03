@@ -1,0 +1,21 @@
+{
+  "name": "ts-lib-seed",
+  "_name": "@thingmate/vendor-tasmota",
+  "version": "1.0.0",
+  "description": "Description",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thingmate/vendor-tasmota"
+  },
+  "sripts": {
+    "reinstall": "rm -rf ./node_modules && rm -f ./yarn.lock && yarn install"
+  },
+  "keywords": [],
+  "author": "Valentin Richard",
+  "license": "MIT",
+  "access": "public",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^29.5.1"
+  }
+}
