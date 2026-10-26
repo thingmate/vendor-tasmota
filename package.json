@@ -1,6 +1,6 @@
 {
   "name": "@thingmate/vendor-tasmota",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Tasmota API",
   "keywords": [],
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/node": "^26.6.5",
     "@vitest/coverage-istanbul": "^5.0.5",
-    "fabrique": "2.0.27",
+    "fabrique": "2.0.28",
     "prettier": "^3.9.10",
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript": "^7.0.2",
@@ -41,14 +41,14 @@
   },
   "access": "public",
   "dependencies": {
-    "@thingmate/abilities": "^0.1.0",
+    "@thingmate/abilities": "^0.1.1",
     "@xstd/async-function": "^1.3.0",
     "@xstd/is-type": "^0.0.2",
     "@xstd/mqtt-resource": "^0.2.1",
     "@xstd/observable-async-function": "^0.1.0"
   },
   "fabrique": {
-    "version": "2.0.27",
+    "version": "2.0.28",
     "type": "lib"
   }
 }

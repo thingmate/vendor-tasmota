@@ -1,17 +1,22 @@
 import { type TasmotaLogging } from '../tasmota-logging.ts';
 
-// date uses rfc9557 => https://datatracker.ietf.org/doc/html/rfc9557
-// const TIME_REGEXP = new RegExp('^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})$', '');
-const LOGGING_REGEX = new RegExp('^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3}) (\\w+):? (.*)$', '');
+/**
+ * Matches a Tasmota log line as published to `stat/<device>/LOGGING`:
+ * `HH:MM:SS(.mmm)? CODE: message`.
+ *
+ * The millisecond part is optional: older firmware versions omit it.
+ */
+const LOGGING_REGEX = /^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{3}))? (\w+):?(?: (.*))?$/;
 
 /**
  * Converts a string input into a `TasmotaLogging` object.
+ *
+ * @param input - A Tasmota log line, as published to `stat/<device>/LOGGING`.
+ * @returns The parsed `TasmotaLogging`.
+ * @throws When `input` does not match the expected log line format.
  */
 export function parseTasmotaLogging(input: string): TasmotaLogging {
-  LOGGING_REGEX.lastIndex = 0;
   const match: RegExpExecArray | null = LOGGING_REGEX.exec(input);
-
-  // TODO Temporal.PlainTime.from("12:34:56");
 
   if (match === null) {
     throw new Error(`Malformed LOGGING: ${input}`);
@@ -22,9 +27,9 @@ export function parseTasmotaLogging(input: string): TasmotaLogging {
       hour: Number(match[1]),
       minute: Number(match[2]),
       second: Number(match[3]),
-      millisecond: Number(match[4]),
+      millisecond: match[4] === undefined ? 0 : Number(match[4]),
     },
     code: match[5],
-    message: match[6],
+    message: match[6] ?? '',
   };
 }
