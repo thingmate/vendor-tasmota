@@ -28,7 +28,8 @@ This package provides an API to control [Tasmota](https://tasmota.github.io/) de
 [MQTT](https://tasmota.github.io/docs/MQTT/), with a focus on Zigbee-capable devices.
 
 - [`MqttTasmotaCli`](#mqtttasmotacli) - send commands to a Tasmota device and observe its logs.
-- [`Other utilities`](#other-utilities) - parse the observed log lines and Zigbee messages.
+- [`Other utilities`](#other-utilities) - parse the observed log lines, Zigbee messages and
+  command results.
 
 ### MqttTasmotaCli
 
@@ -77,7 +78,8 @@ await tasmota.send.call(controller.signal, '{"ZbSend":{"Device":"0x1234","Send":
 ```
 
 The payload is sent as a `string` and must be a JSON object of Tasmota commands. The
-`TasmotaZbSendCommand` type describes the shape of a `ZbSend` payload.
+`TasmotaZbSendCommand` type describes the shape of a `ZbSend` payload, and `TasmotaZbConfigRequest`
+the shape of a `ZbConfig` payload (only the provided fields are updated).
 
 #### Observing log lines
 
@@ -132,10 +134,42 @@ const received = parseTasmotaLoggingAsTasmotaZbZCLReceivedLogging(logging);
 // => { ZbZCLReceived: { srcaddr: '0x1234', payload: '...', ... } } or `null`
 ```
 
+Command results published to `stat/<deviceId>/RESULT` (echoed in `MQT` log lines) follow the same
+pipeline, and are decoded into typed responses:
+
+```ts
+import {
+  parseTasmotaLogging,
+  parseTasmotaLoggingAsTasmotaResult,
+  parseTasmotaResultAsTasmotaZbConfigResponse,
+} from '@thingmate/vendor-tasmota';
+
+const logging = parseTasmotaLogging(
+  '12:34:56.789 MQT: stat/tasmota_XXXXXX/RESULT = {"ZbConfig":{...}}',
+);
+// => { time: { hour: 12, minute: 34, second: 56, millisecond: 789 }, code: 'MQT', message: '...' }
+
+const result = parseTasmotaLoggingAsTasmotaResult(logging);
+// => '{"ZbConfig":{...}}' or `null`
+
+const response = parseTasmotaResultAsTasmotaZbConfigResponse(result);
+// => { ZbConfig: { Channel: 11, PanID: '0x1A63', ExtPanID: '0x...', ... } } or `null`
+```
+
 - `parseTasmotaLogging(line)` - parses a log line (with or without milliseconds) into a
   `TasmotaLogging` (`{ time, code, message }`); throws when the line is malformed.
 - `parseTasmotaLoggingAsTasmotaZbZCLReceivedLogging(logging)` - extracts the received Zigbee ZCL
   frame from a `ZIG` log line, or returns `null`.
+- `parseTasmotaLoggingAsTasmotaResult(logging)` - extracts the JSON payload of a `RESULT` MQTT
+  publication from an `MQT` log line, or returns `null`.
+- `parseTasmotaResultAsTasmotaZbConfigResponse(result)` - parses a `ZbConfig` result (JSON string)
+  into a `TasmotaZbConfigResponse`, or returns `null`.
 - `isTasmotaZbSendResponse(value)` - type guard checking for a successful `ZbSend` response
   (`{ ZbSend: 'Done' }`).
+- `isTasmotaZbConfigResponse(value)` - type guard checking for a `ZbConfig` response.
+- `isTasmotaTasmotaZbConfig(value)` - type guard checking for a `TasmotaZbConfig` object (the
+  device's Zigbee configuration).
 - `TasmotaZbSendCommand` - the shape of a `ZbSend` command payload.
+- `TasmotaZbConfigRequest` - the shape of a `ZbConfig` command payload.
+- `TasmotaZbConfig` - the shape of a Zigbee configuration: `Channel`, `PanID`, `ExtPanID`, `KeyL`,
+  `KeyH` and `TxRadio`.

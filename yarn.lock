@@ -642,7 +642,7 @@ __metadata:
     "@xstd/is-type": "npm:^0.0.2"
     "@xstd/mqtt-resource": "npm:^0.2.1"
     "@xstd/observable-async-function": "npm:^0.1.0"
-    fabrique: "npm:2.0.28"
+    fabrique: "npm:2.0.29"
     prettier: "npm:^3.9.10"
     prettier-plugin-organize-imports: "npm:^4.3.0"
     typescript: "npm:^7.0.2"
@@ -1354,9 +1354,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fabrique@npm:2.0.28":
-  version: 2.0.28
-  resolution: "fabrique@npm:2.0.28"
+"fabrique@npm:2.0.29":
+  version: 2.0.29
+  resolution: "fabrique@npm:2.0.29"
   dependencies:
     "@inquirer/prompts": "npm:^8.7.4"
     chalk: "npm:^6.0.1"
@@ -1364,7 +1364,7 @@ __metadata:
     zod: "npm:^4.6.7"
   bin:
     fabrique: src/cli/cli.js
-  checksum: 10c0/0c36a8981fd3a290720e22c0ecbde1d4bdfb03f66b844a8c0ed3786805e00a3b35f1166b5b0973327675d3e1c9c72a67aaa594e47ee0fce22c2566c6c34c9e2c
+  checksum: 10c0/b6e0eeb1e1646e9dad53813eca1fd194af367971f8de10c50c1b4a6a0fbd1a031aea34b8666b6ccb5e35a3fdca09e029b3eb393a66b6e4d9e55d9aeed24bfdb4
   languageName: node
   linkType: hard
 
