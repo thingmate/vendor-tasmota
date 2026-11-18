@@ -176,7 +176,7 @@ const response = parseTasmotaResultAsTasmotaZbConfigResponse(result);
 - `isTasmotaZbSendResponse(value)` - type guard checking for a successful `ZbSend` response
   (`{ ZbSend: 'Done' }`).
 - `isTasmotaZbConfigResponse(value)` - type guard checking for a `ZbConfig` response.
-- `isTasmotaTasmotaZbConfig(value)` - type guard checking for a `TasmotaZbConfig` object (the
+- `isTasmotaZbConfig(value)` - type guard checking for a `TasmotaZbConfig` object (the
   device's Zigbee configuration).
 - `TasmotaZbSendCommand` - the shape of a `ZbSend` command payload.
 - `TasmotaZbConfigRequest` - the shape of a `ZbConfig` command payload.

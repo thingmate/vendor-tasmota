@@ -7,7 +7,7 @@ import type { TasmotaZbConfig } from './tasmota-zb-config.ts';
  * @param input - The value to check.
  * @returns `true` when the input is a `TasmotaZbConfig`.
  */
-export function isTasmotaTasmotaZbConfig(input: unknown): input is TasmotaZbConfig {
+export function isTasmotaZbConfig(input: unknown): input is TasmotaZbConfig {
   if (!isObject(input)) {
     return false;
   }
