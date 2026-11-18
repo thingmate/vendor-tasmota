@@ -57,10 +57,15 @@ import { MqttResource } from '@xstd/mqtt-resource';
 import { MqttTasmotaCli } from '@thingmate/vendor-tasmota';
 
 // connect to the MQTT broker the Tasmota device is connected to
-const mqtt: MqttResource = await MqttResource.open('mqtt://192.168.1.10:1883', {
-  username: 'user',
-  password: 'password',
-});
+const controller: AbortController = new AbortController();
+const mqtt: MqttResource = await MqttResource.open.call(
+  controller.signal,
+  'mqtt://192.168.1.10:1883',
+  {
+    username: 'user',
+    password: 'password',
+  },
+);
 
 const tasmota = new MqttTasmotaCli({
   mqtt,
@@ -70,7 +75,8 @@ const tasmota = new MqttTasmotaCli({
 
 `MqttResource` comes from the
 [`@xstd/mqtt-resource`](https://www.npmjs.com/package/@xstd/mqtt-resource) package (installed
-alongside this one). Any implementation of the `MqttResourceTrait` interface may be used instead.
+alongside this one). Any implementation exposing the `publish` and `subscribe` abilities of an
+MQTT resource (the `HavingMqttResourceAbilities` interface) may be used instead.
 
 #### Sending commands
 

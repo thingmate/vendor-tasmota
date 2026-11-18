@@ -1,10 +1,9 @@
-import { AsyncFunction } from '@xstd/async-function';
 import type {
+  HavingMqttResourceAbilities,
   MqttPublishPacket,
-  MqttResourceTrait,
-  MqttSubscriptionResourceTrait,
+  MqttResourcePublishArguments,
+  MqttResourceSubscribeArguments,
 } from '@xstd/mqtt-resource';
-import { ObservableAsyncFunction } from '@xstd/observable-async-function';
 import type { TasmotaCliArguments } from '../../abilities/tasmota-cli/having-tasmota-cli-abilities.ts';
 import { TasmotaCliAbilities } from '../../abilities/tasmota-cli/tasmota-cli-abilities.ts';
 
@@ -15,7 +14,7 @@ const TEXT_DECODER = new TextDecoder();
  */
 export interface MqttTasmotaCliOptions {
   /** MQTT resource connected to the broker the Tasmota device is connected to. */
-  readonly mqtt: MqttResourceTrait;
+  readonly mqtt: Pick<HavingMqttResourceAbilities, 'publish' | 'subscribe'>;
   /** MQTT topic of the Tasmota device (ex: `tasmota_XXXXXX`). */
   readonly deviceId: string;
 }
@@ -45,22 +44,15 @@ export class MqttTasmotaCli extends TasmotaCliAbilities {
    */
   constructor({ mqtt, deviceId }: MqttTasmotaCliOptions) {
     super({
-      send: new AsyncFunction<TasmotaCliArguments, void>(
-        (signal: AbortSignal, payload: string): Promise<void> => {
-          return mqtt.publish(`cmnd/${deviceId}/json`, payload, {
-            signal,
-          });
-        },
-      ),
-      observe: new ObservableAsyncFunction<MqttPublishPacket>(
-        (signal: AbortSignal): Promise<MqttSubscriptionResourceTrait> => {
-          return mqtt.subscribe(`stat/${deviceId}/LOGGING`, {
-            signal,
-          });
-        },
-      ).map(({ payload }: MqttPublishPacket): TasmotaCliArguments => {
-        return [TEXT_DECODER.decode(payload)];
-      }),
+      send: mqtt.publish.mapArguments((payload: string): MqttResourcePublishArguments => [
+        `cmnd/${deviceId}/json`,
+        payload,
+      ]),
+      observe: mqtt.subscribe
+        .mapArguments((): MqttResourceSubscribeArguments => [`stat/${deviceId}/LOGGING`])
+        .map(({ payload }: MqttPublishPacket): TasmotaCliArguments => [
+          TEXT_DECODER.decode(payload),
+        ]),
     });
   }
 }
