@@ -20,7 +20,7 @@ export function isTasmotaZbConfig(input: unknown): input is TasmotaZbConfig {
     is0xHexString(config.ExtPanID, 16) && // hex 8B
     is0xHexString(config.KeyL, 16) && // hex 8B
     is0xHexString(config.KeyH, 16) && // hex 8B
-    isNumberInRange(config.TxRadio, 1, 21)
+    isNumberInRange(config.TxRadio, 1, 20)
   );
 }
 

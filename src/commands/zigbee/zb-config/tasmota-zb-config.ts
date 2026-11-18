@@ -12,6 +12,6 @@ export interface TasmotaZbConfig {
   readonly KeyL: string;
   /** High half of the Zigbee network key (hex u64). */
   readonly KeyH: string;
-  /** Zigbee radio transmit power (`1-21`). */
+  /** Zigbee radio transmit power (`1-20`). */
   readonly TxRadio: number;
 }
