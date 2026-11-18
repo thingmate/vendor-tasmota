@@ -1,6 +1,6 @@
 import { isObject } from '@xstd/is-type';
-import type { TasmotaZbZCLReceivedLogging } from './tasmota-zb-zcl-received-logging.ts';
 import { isTasmotaZbZCLReceived } from '../tasmota-zb-zcl-received/is-tasmota-zb-zcl-received.ts';
+import type { TasmotaZbZCLReceivedLogging } from './tasmota-zb-zcl-received-logging.ts';
 
 /**
  * Checks whether an input is a `TasmotaZbZCLReceivedLogging` (a `ZbZCLReceived` Tasmota logging

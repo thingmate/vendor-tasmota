@@ -7,7 +7,7 @@ import type { TasmotaZbConfig } from './tasmota-zb-config.ts';
  * @param input - The value to check.
  * @returns `true` when the input is a `TasmotaZbConfig`.
  */
-export function isTasmotaTasmotaZbConfig(input: unknown): input is TasmotaZbConfig {
+export function isTasmotaZbConfig(input: unknown): input is TasmotaZbConfig {
   if (!isObject(input)) {
     return false;
   }
@@ -20,15 +20,15 @@ export function isTasmotaTasmotaZbConfig(input: unknown): input is TasmotaZbConf
     is0xHexString(config.ExtPanID, 16) && // hex 8B
     is0xHexString(config.KeyL, 16) && // hex 8B
     is0xHexString(config.KeyH, 16) && // hex 8B
-    isNumberInRange(config.TxRadio, 1, 21)
+    isNumberInRange(config.TxRadio, 1, 20)
   );
 }
 
 /**
- * Checks whether a value is a number in the given inclusive range.
+ * Checks whether a value is an integer in the given inclusive range.
  */
 function isNumberInRange(input: unknown, min: number, max: number): boolean {
-  return typeof input === 'number' && input >= min && input <= max;
+  return typeof input === 'number' && Number.isInteger(input) && input >= min && input <= max;
 }
 
 /**

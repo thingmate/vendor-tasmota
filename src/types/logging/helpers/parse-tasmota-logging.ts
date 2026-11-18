@@ -5,8 +5,14 @@ import { type TasmotaLogging } from '../tasmota-logging.ts';
  * `HH:MM:SS(.mmm)? CODE: message`.
  *
  * The millisecond part is optional: older firmware versions omit it.
+ *
+ * When the device has `SetOption130 1` ("Show heap with logging timestamp"), the firmware appends
+ * a heap suffix to the timestamp: `HH:MM:SS.mmm-<free heap kB>` (ESP8266) or
+ * `HH:MM:SS.mmm-<free heap kB>/<heap fragmentation>` (ESP32). The suffix is diagnostic-only and is
+ * dropped by the parse: the resulting `TasmotaLoggingTime` is unaffected.
  */
-const LOGGING_REGEX = /^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{3}))? (\w+):?(?: (.*))?$/;
+const LOGGING_REGEX =
+  /^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{3}))?(?:-\d+(?:\/\d+)?)? (\w+):?(?: (.*))?$/;
 
 /**
  * Converts a string input into a `TasmotaLogging` object.

@@ -2,7 +2,7 @@
 ![npm](https://img.shields.io/npm/dm/@thingmate/vendor-tasmota.svg)
 ![NPM](https://img.shields.io/npm/l/@thingmate/vendor-tasmota.svg)
 ![npm type definitions](https://img.shields.io/npm/types/@thingmate/vendor-tasmota.svg)
-![AI generation](https://img.shields.io/badge/AI_generation-none-yellow)
+![AI generation](https://img.shields.io/badge/AI_generation-low-yellow)
 
 <picture>
   <source height="64" media="(prefers-color-scheme: dark)" srcset="https://github.com/thingmate/website/blob/main/assets/logo/png/logo-large-dark.png?raw=true">
@@ -12,7 +12,7 @@
 
 ## @thingmate/vendor-tasmota
 
-Tasmota API.
+API to control [Tasmota](https://tasmota.github.io/) devices over [MQTT](https://tasmota.github.io/docs/MQTT/), with a focus on Zigbee-capable devices.
 
 ## 📦 Installation
 
@@ -24,8 +24,7 @@ npm install @thingmate/vendor-tasmota --save
 
 ## 📜 Documentation
 
-This package provides an API to control [Tasmota](https://tasmota.github.io/) devices over
-[MQTT](https://tasmota.github.io/docs/MQTT/), with a focus on Zigbee-capable devices.
+The API is organised around two entry points:
 
 - [`MqttTasmotaCli`](#mqtttasmotacli) - send commands to a Tasmota device and observe its logs.
 - [`Other utilities`](#other-utilities) - parse the observed log lines, Zigbee messages and
@@ -42,7 +41,14 @@ This package provides an API to control [Tasmota](https://tasmota.github.io/) de
 
 > [!NOTE]
 > The device only publishes its log lines when its `MqttLog` level is greater than `0` (`0` is the
-> default). Enable it on the device with `MqttLog 2` (errors and info).
+> default). Enable it on the device with `MqttLog 2` (errors and info, including command
+> responses), or `MqttLog 3` to also observe received Zigbee frames (`ZbZCLReceived` log lines are
+> published at debug level).
+
+> [!NOTE]
+> The default Tasmota full topic (`%prefix%/%topic%/`) is assumed: commands are sent to
+> `cmnd/<deviceId>/json` and log lines observed on `stat/<deviceId>/LOGGING`. Devices with a
+> custom full topic are not supported.
 
 #### Creating a client
 
@@ -51,10 +57,15 @@ import { MqttResource } from '@xstd/mqtt-resource';
 import { MqttTasmotaCli } from '@thingmate/vendor-tasmota';
 
 // connect to the MQTT broker the Tasmota device is connected to
-const mqtt: MqttResource = await MqttResource.open('mqtt://192.168.1.10:1883', {
-  username: 'user',
-  password: 'password',
-});
+const controller: AbortController = new AbortController();
+const mqtt: MqttResource = await MqttResource.open.call(
+  controller.signal,
+  'mqtt://192.168.1.10:1883',
+  {
+    username: 'user',
+    password: 'password',
+  },
+);
 
 const tasmota = new MqttTasmotaCli({
   mqtt,
@@ -64,7 +75,8 @@ const tasmota = new MqttTasmotaCli({
 
 `MqttResource` comes from the
 [`@xstd/mqtt-resource`](https://www.npmjs.com/package/@xstd/mqtt-resource) package (installed
-alongside this one). Any implementation of the `MqttResourceTrait` interface may be used instead.
+alongside this one). Any implementation exposing the `publish` and `subscribe` abilities of an
+MQTT resource (the `HavingMqttResourceAbilities` interface) may be used instead.
 
 #### Sending commands
 
@@ -134,8 +146,9 @@ const received = parseTasmotaLoggingAsTasmotaZbZCLReceivedLogging(logging);
 // => { ZbZCLReceived: { srcaddr: '0x1234', payload: '...', ... } } or `null`
 ```
 
-Command results published to `stat/<deviceId>/RESULT` (echoed in `MQT` log lines) follow the same
-pipeline, and are decoded into typed responses:
+Command responses published to `stat/<deviceId>/RESULT` (or to `stat/<deviceId>/<COMMAND>` when
+the device has `SetOption4` enabled; echoed in `MQT` log lines) follow the same pipeline, and are
+decoded into typed responses:
 
 ```ts
 import {
@@ -160,14 +173,15 @@ const response = parseTasmotaResultAsTasmotaZbConfigResponse(result);
   `TasmotaLogging` (`{ time, code, message }`); throws when the line is malformed.
 - `parseTasmotaLoggingAsTasmotaZbZCLReceivedLogging(logging)` - extracts the received Zigbee ZCL
   frame from a `ZIG` log line, or returns `null`.
-- `parseTasmotaLoggingAsTasmotaResult(logging)` - extracts the JSON payload of a `RESULT` MQTT
-  publication from an `MQT` log line, or returns `null`.
+- `parseTasmotaLoggingAsTasmotaResult(logging)` - extracts the JSON payload of a command-response
+  MQTT publication from an `MQT` log line (`RESULT`, `STATUS<n>`, or the command name when the
+  device has `SetOption4` enabled), or returns `null`.
 - `parseTasmotaResultAsTasmotaZbConfigResponse(result)` - parses a `ZbConfig` result (JSON string)
   into a `TasmotaZbConfigResponse`, or returns `null`.
 - `isTasmotaZbSendResponse(value)` - type guard checking for a successful `ZbSend` response
   (`{ ZbSend: 'Done' }`).
 - `isTasmotaZbConfigResponse(value)` - type guard checking for a `ZbConfig` response.
-- `isTasmotaTasmotaZbConfig(value)` - type guard checking for a `TasmotaZbConfig` object (the
+- `isTasmotaZbConfig(value)` - type guard checking for a `TasmotaZbConfig` object (the
   device's Zigbee configuration).
 - `TasmotaZbSendCommand` - the shape of a `ZbSend` command payload.
 - `TasmotaZbConfigRequest` - the shape of a `ZbConfig` command payload.
