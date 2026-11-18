@@ -44,6 +44,7 @@
     "@types/node": "^26.6.6",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/coverage-istanbul": "^5.1.0",
+    "@xstd/listener-resource": "^1.0.0",
     "fabrique": "2.0.37",
     "prettier": "^3.10.1",
     "prettier-plugin-organize-imports": "^4.3.0",
