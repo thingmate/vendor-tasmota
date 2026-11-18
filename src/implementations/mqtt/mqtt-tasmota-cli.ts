@@ -26,6 +26,13 @@ export interface MqttTasmotaCliOptions {
  * Commands are sent as JSON payloads to `cmnd/<deviceId>/json`, and the log lines published by the
  * device to `stat/<deviceId>/LOGGING` are observed (decoded as strings).
  *
+ * Device configuration assumed:
+ * - the default Tasmota full topic (`%prefix%/%topic%/`): custom full topics are not supported;
+ * - `MqttLog 2` minimum, else the device publishes no log line at all (`MqttLog 0` is the default);
+ *   command responses are logged at info level;
+ * - `MqttLog 3` to also observe received Zigbee frames (`ZbZCLReceived` log lines are logged at
+ *   debug level).
+ *
  * Note: the observed stream contains *all* the device's log lines - including the echo of the
  * commands sent to it, and unrelated logs. Tasmota provides no correlation id, so an observed
  * line cannot be matched to a specific sent command.

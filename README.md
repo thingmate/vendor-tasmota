@@ -42,7 +42,14 @@ This package provides an API to control [Tasmota](https://tasmota.github.io/) de
 
 > [!NOTE]
 > The device only publishes its log lines when its `MqttLog` level is greater than `0` (`0` is the
-> default). Enable it on the device with `MqttLog 2` (errors and info).
+> default). Enable it on the device with `MqttLog 2` (errors and info, including command
+> responses), or `MqttLog 3` to also observe received Zigbee frames (`ZbZCLReceived` log lines are
+> published at debug level).
+
+> [!NOTE]
+> The default Tasmota full topic (`%prefix%/%topic%/`) is assumed: commands are sent to
+> `cmnd/<deviceId>/json` and log lines observed on `stat/<deviceId>/LOGGING`. Devices with a
+> custom full topic are not supported.
 
 #### Creating a client
 
@@ -134,8 +141,9 @@ const received = parseTasmotaLoggingAsTasmotaZbZCLReceivedLogging(logging);
 // => { ZbZCLReceived: { srcaddr: '0x1234', payload: '...', ... } } or `null`
 ```
 
-Command results published to `stat/<deviceId>/RESULT` (echoed in `MQT` log lines) follow the same
-pipeline, and are decoded into typed responses:
+Command responses published to `stat/<deviceId>/RESULT` (or to `stat/<deviceId>/<COMMAND>` when
+the device has `SetOption4` enabled; echoed in `MQT` log lines) follow the same pipeline, and are
+decoded into typed responses:
 
 ```ts
 import {
@@ -160,8 +168,9 @@ const response = parseTasmotaResultAsTasmotaZbConfigResponse(result);
   `TasmotaLogging` (`{ time, code, message }`); throws when the line is malformed.
 - `parseTasmotaLoggingAsTasmotaZbZCLReceivedLogging(logging)` - extracts the received Zigbee ZCL
   frame from a `ZIG` log line, or returns `null`.
-- `parseTasmotaLoggingAsTasmotaResult(logging)` - extracts the JSON payload of a `RESULT` MQTT
-  publication from an `MQT` log line, or returns `null`.
+- `parseTasmotaLoggingAsTasmotaResult(logging)` - extracts the JSON payload of a command-response
+  MQTT publication from an `MQT` log line (`RESULT`, `STATUS<n>`, or the command name when the
+  device has `SetOption4` enabled), or returns `null`.
 - `parseTasmotaResultAsTasmotaZbConfigResponse(result)` - parses a `ZbConfig` result (JSON string)
   into a `TasmotaZbConfigResponse`, or returns `null`.
 - `isTasmotaZbSendResponse(value)` - type guard checking for a successful `ZbSend` response

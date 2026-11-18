@@ -29,6 +29,33 @@ describe('parseTasmotaLoggingAsTasmotaResult', () => {
     ).toBeNull();
   });
 
+  it('returns null for a non-JSON command state publication', () => {
+    expect(
+      parseTasmotaLoggingAsTasmotaResult({
+        code: 'MQT',
+        message: 'stat/tasmota_XXXXXX/POWER1 = ON',
+      }),
+    ).toBeNull();
+  });
+
+  it('extracts the JSON payload of a STATUS command response', () => {
+    expect(
+      parseTasmotaLoggingAsTasmotaResult({
+        code: 'MQT',
+        message: 'stat/tasmota_XXXXXX/STATUS5 = {"Status":{"Module":18}}',
+      }),
+    ).toBe('{"Status":{"Module":18}}');
+  });
+
+  it('extracts the JSON payload of a command response published to the command name topic (SetOption4)', () => {
+    expect(
+      parseTasmotaLoggingAsTasmotaResult({
+        code: 'MQT',
+        message: 'stat/living-room/ZBSEND = {"ZbSend":"Done"}',
+      }),
+    ).toBe('{"ZbSend":"Done"}');
+  });
+
   it('returns null for another code', () => {
     expect(parseTasmotaLoggingAsTasmotaResult({ code: 'ZIG', message: 'anything' })).toBeNull();
   });
