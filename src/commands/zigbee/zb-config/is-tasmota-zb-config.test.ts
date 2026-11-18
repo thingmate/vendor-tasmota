@@ -107,4 +107,27 @@ describe('isTasmotaZbConfig', () => {
       }),
     ).toBe(false);
   });
+
+  it('rejects a non-integer channel or transmit power', () => {
+    expect(
+      isTasmotaZbConfig({
+        Channel: 11.5,
+        PanID: '0x1A63',
+        ExtPanID: '0x0123456789ABCDEF',
+        KeyL: '0x0F0D0B0907050301',
+        KeyH: '0x0D0C0A0806040200',
+        TxRadio: 20,
+      }),
+    ).toBe(false);
+    expect(
+      isTasmotaZbConfig({
+        Channel: 11,
+        PanID: '0x1A63',
+        ExtPanID: '0x0123456789ABCDEF',
+        KeyL: '0x0F0D0B0907050301',
+        KeyH: '0x0D0C0A0806040200',
+        TxRadio: 1.5,
+      }),
+    ).toBe(false);
+  });
 });
