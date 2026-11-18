@@ -1,6 +1,6 @@
 {
   "name": "@thingmate/vendor-tasmota",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "type": "module",
   "description": "API to control Tasmota devices over MQTT, with a focus on Zigbee-capable devices",
   "keywords": [
