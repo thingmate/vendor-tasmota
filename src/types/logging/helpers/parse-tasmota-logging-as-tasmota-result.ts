@@ -4,7 +4,7 @@ import type { TasmotaLogging } from '../tasmota-logging.ts';
  * Matches the `message` of an `MQT` Tasmota log line holding a `RESULT` MQTT publication:
  * `stat/<device>/RESULT = <json>`.
  */
-const MQTT_RESULT_REGEX = /^stat\/\w+\/RESULT\s*=\s*(.*)$/;
+const MQTT_RESULT_REGEX = /^stat\/[^/\s]+\/RESULT\s*=\s*(.*)$/;
 
 /**
  * Attempts to parse the `code` and `message` of a `TasmotaLogging` as the JSON payload of a
