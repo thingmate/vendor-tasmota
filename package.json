@@ -2,8 +2,17 @@
   "name": "@thingmate/vendor-tasmota",
   "version": "0.1.2",
   "type": "module",
-  "description": "Tasmota API",
-  "keywords": [],
+  "description": "API to control Tasmota devices over MQTT, with a focus on Zigbee-capable devices",
+  "keywords": [
+    "tasmota",
+    "mqtt",
+    "zigbee",
+    "iot",
+    "home-automation",
+    "esp8266",
+    "esp32",
+    "sonoff"
+  ],
   "author": "Valentin Richard",
   "license": "MIT",
   "repository": {

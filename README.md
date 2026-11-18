@@ -2,7 +2,7 @@
 ![npm](https://img.shields.io/npm/dm/@thingmate/vendor-tasmota.svg)
 ![NPM](https://img.shields.io/npm/l/@thingmate/vendor-tasmota.svg)
 ![npm type definitions](https://img.shields.io/npm/types/@thingmate/vendor-tasmota.svg)
-![AI generation](https://img.shields.io/badge/AI_generation-none-yellow)
+![AI generation](https://img.shields.io/badge/AI_generation-low-yellow)
 
 <picture>
   <source height="64" media="(prefers-color-scheme: dark)" srcset="https://github.com/thingmate/website/blob/main/assets/logo/png/logo-large-dark.png?raw=true">
@@ -12,7 +12,7 @@
 
 ## @thingmate/vendor-tasmota
 
-Tasmota API.
+API to control [Tasmota](https://tasmota.github.io/) devices over [MQTT](https://tasmota.github.io/docs/MQTT/), with a focus on Zigbee-capable devices.
 
 ## 📦 Installation
 
@@ -24,8 +24,7 @@ npm install @thingmate/vendor-tasmota --save
 
 ## 📜 Documentation
 
-This package provides an API to control [Tasmota](https://tasmota.github.io/) devices over
-[MQTT](https://tasmota.github.io/docs/MQTT/), with a focus on Zigbee-capable devices.
+The API is organised around two entry points:
 
 - [`MqttTasmotaCli`](#mqtttasmotacli) - send commands to a Tasmota device and observe its logs.
 - [`Other utilities`](#other-utilities) - parse the observed log lines, Zigbee messages and
